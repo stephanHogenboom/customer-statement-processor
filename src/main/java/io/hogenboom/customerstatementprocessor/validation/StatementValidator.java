@@ -15,6 +15,10 @@ import static io.hogenboom.customerstatementprocessor.validation.StatementValida
 import static io.hogenboom.customerstatementprocessor.validation.StatementValidator.ValidationRecordResult.valid;
 import static java.util.function.Predicate.not;
 
+/**
+ * This component takes an list of @link MT940Record and validates if  all the statement are correct.
+ * It  also  verifies that all statement references are unique
+ */
 @Component
 public class StatementValidator {
 
@@ -32,17 +36,20 @@ public class StatementValidator {
         if (!duplicateReferences.isEmpty() || !invalidIndividualValidationResults.isEmpty()) {
             return ValidationResultAggregateResult.invalid(
                     invalidIndividualValidationResults,
-                    duplicateReferences.isEmpty()
-                            ? Collections.emptySet()
-                            : Set.of(
-                            String.format(
-                                    "The following transaction references were duplicate %s",
-                                    duplicateReferences
-                            )
-                    ));
+                    toAggregateValidationViolationMessages(duplicateReferences));
         }
         return ValidationResultAggregateResult.valid();
+    }
 
+    private Set<String> toAggregateValidationViolationMessages(Set<?> duplicateReferences) {
+        return duplicateReferences.isEmpty()
+                ? Collections.emptySet()
+                : Set.of(
+                String.format(
+                        "The following transaction references were duplicate %s",
+                        duplicateReferences
+                )
+        );
     }
 
     private Set<?> findDuplicateElements(final List<?> elements) {

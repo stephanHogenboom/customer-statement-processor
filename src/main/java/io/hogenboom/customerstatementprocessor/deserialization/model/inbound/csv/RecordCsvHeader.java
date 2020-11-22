@@ -1,8 +1,8 @@
-package io.hogenboom.customerstatementprocessor.model;
+package io.hogenboom.customerstatementprocessor.deserialization.model.inbound.csv;
 
 import lombok.Getter;
 
-public enum CsvHeader {
+public enum RecordCsvHeader {
 
     REFERNECE("Reference"),
     ACCOUNT_NUMBER("Account Number"),
@@ -11,11 +11,10 @@ public enum CsvHeader {
     MUTATION("Mutation"),
     END_BALANCE("End Balance");
 
-
     @Getter
     String value;
 
-    CsvHeader(String value) {
+    RecordCsvHeader(String value) {
         this.value = value;
     }
 
