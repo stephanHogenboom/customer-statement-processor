@@ -3,6 +3,7 @@ package io.hogenboom.customerstatementprocessor;
 import io.hogenboom.customerstatementprocessor.deserialization.ContentType;
 import io.hogenboom.customerstatementprocessor.model.AccountNumber;
 import io.hogenboom.customerstatementprocessor.model.MT940Record;
+import io.hogenboom.customerstatementprocessor.service.ValidationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

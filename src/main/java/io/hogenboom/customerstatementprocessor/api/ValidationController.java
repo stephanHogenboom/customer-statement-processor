@@ -1,7 +1,8 @@
 package io.hogenboom.customerstatementprocessor.api;
 
-import io.hogenboom.customerstatementprocessor.ValidationService;
 import io.hogenboom.customerstatementprocessor.deserialization.ContentType;
+import io.hogenboom.customerstatementprocessor.service.ValidationService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -17,27 +18,28 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/validate")
+@RequestMapping
 public class ValidationController {
 
     private final ValidationService service;
 
-    private final Set<String> allowedContentTypes = Set.of(
-            "text/xml", "application/xml", "application/CSV"
-    );
+    private final Set<String> ALLOWED_MEDIA_TYPES = Set.of("application/CSV", MediaType.APPLICATION_XML_VALUE);
 
     public ValidationController(ValidationService service) {
         this.service = service;
     }
 
-    @PostMapping("/")
+    @PostMapping("validate")
     public ResponseEntity<ValidationService.ValidationResult> validate(
             @RequestHeader("Content-Type") String contentType,
             HttpServletRequest request) throws IOException {
-        if (allowedContentTypes.contains(contentType)) {
-            var type = Set.of("text/xml", "application/xml").contains(contentType)
-                    ? ContentType.CSV
-                    : ContentType.XML;
+        if (contentType != null
+                && (contentType.contains(MediaType.APPLICATION_XML_VALUE)
+                || contentType.contains("application/CSV"))
+        ) {
+            var type = contentType.contains(MediaType.APPLICATION_XML_VALUE)
+                    ? ContentType.XML
+                    : ContentType.CSV;
             var content = new BufferedReader(
                     new InputStreamReader(request.getInputStream(), StandardCharsets.UTF_8))
                     .lines()
@@ -49,7 +51,7 @@ public class ValidationController {
                 .body(ValidationService.ValidationResult.deserializationFailed(
                         String.format("%s is not an allowed content-type, should be one of %s",
                                 contentType,
-                                allowedContentTypes
+                                ALLOWED_MEDIA_TYPES
                         )
                 ));
     }
