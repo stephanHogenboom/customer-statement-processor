@@ -29,6 +29,13 @@ public class ValidationController {
         this.service = service;
     }
 
+    //TODO  add api doc
+    //TODO add separate controller for csv and xml
+    //TODO add security
+    /**
+     *  controller that accepts both csv and xml as request body.
+     *  Decides based on the content-type header what strategy should be chosen
+     */
     @PostMapping("validate")
     public ResponseEntity<ValidationService.ValidationResult> validate(
             @RequestHeader("Content-Type") String contentType,
